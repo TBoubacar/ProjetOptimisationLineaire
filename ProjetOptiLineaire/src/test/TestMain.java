@@ -21,10 +21,7 @@ public class TestMain {
 //		glouton.recherchecoupOptimal();
 		
 		System.out.println("######### Branch and Bound#######################");
-		BranchAndBound b = new BranchAndBound("./data/Scenarios\\ListeBases\\ListeBases1.txt", "./data/Scenarios\\ListeEntreprises\\ListeEnt1.txt");
-		b.recherchecoupOptimalBB();
-
-		
+		BranchAndBound b = new BranchAndBound("./data/Scenarios\\ListeBases\\ListeBases1.txt", "./data/Scenarios\\ListeEntreprises\\ListeEnt1.txt");		
 	}
 
 }

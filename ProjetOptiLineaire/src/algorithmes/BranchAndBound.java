@@ -16,8 +16,10 @@ public class BranchAndBound {
 		scenario = new Scenario();
 	
 		listeEntreprise = new ListeEntreprise();
-		initialisationBases(fichiersBases);
-		initialisationEntreprises(fichiersEntreprises);
+		initialisationEntreprises(fichiersEntreprises);		// Les entreprises doivent etre créer avant les bases (IMPORTANT)
+//		initialisationBases(fichiersBases);
+		initialisationBasesBB(fichiersBases);
+		System.out.println("Le cout minimum pour avoir les informations sur l'ensemble de nos " + listeEntreprise.getListeEntreprises().size() + " : " + baseDonneeGeneral.determineCoutAndEntreprise(listeEntreprise));
 	}
 	
 	public void initialisationBases(String filename) throws IOException {
@@ -31,6 +33,22 @@ public class BranchAndBound {
 		}
 	}
 	
+	public void initialisationBasesBB(String filename) throws IOException {
+		scenario.lecturesbases(filename);
+
+		for(int i=1;i<scenario.getListesBases().size();i++) {
+			Base b = new Base("./data/"+scenario.getListesBases().get(i),i);
+			b.setCout(Double.valueOf(b.getBases().get(0)));
+			baseDonneeGeneral.addBase(b);
+		}
+		baseDonneeGeneral.optimiserRechercheApproffondies(listeEntreprise);	// On determine l'ensemble des bases avec leur liste d'entreprise
+		for (Base b : baseDonneeGeneral.getListeBasePertinent()) {
+			b.setQualitePrix(b.getCout()/b.getEntreprisesTrouves().size());
+		}
+		baseDonneeGeneral.trierParQualitePrix(baseDonneeGeneral.getListeBasePertinent());
+		baseDonneeGeneral.findTheBestSolutionOfRechercheBase(listeEntreprise);
+	}
+	
 	public void initialisationEntreprises(String filename) throws Exception {
 		scenario.lectureEntreprises(filename);
 		for(int i=1;i<scenario.getListeEntreprises().size();i++) {
@@ -42,8 +60,7 @@ public class BranchAndBound {
 	public void recherchecoupOptimalBB() {
 		
 		System.out.println("En triant par ordre croissant de cout/ :");
-		baseDonneeGeneral.trierParQualitePrix(baseDonneeGeneral.getListeBase());
-		int cout=baseDonneeGeneral.optimiserRechercheApproffondies(listeEntreprise);
-		System.out.println("cout optimal trouve = "+cout);
+//		int cout=baseDonneeGeneral.optimiserRechercheApproffondies(listeEntreprise);
+//		System.out.println("cout optimal trouve = "+cout);
 	}
 }

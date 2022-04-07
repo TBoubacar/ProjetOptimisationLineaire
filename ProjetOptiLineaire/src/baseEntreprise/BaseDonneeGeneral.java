@@ -81,6 +81,15 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 		// TODO Auto-generated method stub
 		return Double.compare(arg0.getQualitePrix(),arg1.getQualitePrix()); 	
 	}
+	
+	public ArrayList<Base> getListeBasePertinent() {
+		return listeBasePertinent;
+	}
+
+	public void setListeBasePertinent(ArrayList<Base> listeBasePertinent) {
+		this.listeBasePertinent = listeBasePertinent;
+	}
+
 	public int optimiserRecherche(ListeEntreprise entreprises,ArrayList<Base>liste) {
 		int cout=0;
 		for(Base b : liste) {
@@ -101,8 +110,41 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 		}
 		return cout;
 	}
-	public int optimiserRechercheApproffondies(ListeEntreprise entreprises) {
-		int cout=0;
+
+	public ListeEntreprise findTheBestSolutionOfRechercheBase(ListeEntreprise entreprises) {		
+		ListIterator<Entreprise> entreprisesIterator = entreprises.getListeEntreprises().listIterator();
+		while(entreprisesIterator.hasNext()) {
+			Entreprise entreprise = entreprisesIterator.next();
+			for(Base b : listeBasePertinent) {
+				if(b.chercheEntreprise(entreprise) && entreprise.getCoutMin() > b.getCout()) {
+					entreprise.changeInfoBaseMoinsGouteux(b.getIdBase(), b.getCout());
+				}
+			}
+			System.out.println("Entreprise [" + entreprise.getNom() + "] a pour base le moins couteux : [Base n°" + entreprise.getIdBaseMin() + ", cout : " + entreprise.getCoutMin() + "]\n");
+		}
+		return entreprises;
+	}
+	
+	public double determineCoutAndEntreprise(ListeEntreprise entreprises) {
+		// TODO Auto-generated method stub
+		double cout = 0;
+		String msg = "";
+		ArrayList<Integer> basePayer = new ArrayList<Integer>();
+		System.out.println("Nos entreprises ont été retrouvé dans les bases suivants : ");
+		ListIterator<Entreprise> entreprisesIterator = entreprises.getListeEntreprises().listIterator();
+		while(entreprisesIterator.hasNext()) {
+			Entreprise entreprise = entreprisesIterator.next();
+			if (! basePayer.contains(entreprise.getIdBaseMin())) {
+				cout += entreprise.getCoutMin();
+				msg += "\t[Base n°" + entreprise.getIdBaseMin() + ", ayant pour cout : " + entreprise.getCoutMin() + " euros]\n";
+				basePayer.add(entreprise.getIdBaseMin());
+			}
+		}
+		System.out.println(msg + "\n");
+		return cout;
+	}
+	
+	public void optimiserRechercheApproffondies(ListeEntreprise entreprises) {
 		
 		for(Base b : listeBase) {
 			ListIterator<Entreprise>entreprisesIterator=entreprises.getListeEntreprises().listIterator();
@@ -119,8 +161,6 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 		}
 		trierParCout(listeBasePertinent);
 		
-		
-		return cout;
 	}
 	
 	public void afficheEntr(ArrayList<Entreprise>stock) {
@@ -154,7 +194,7 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 			if(var) {
 				cout+=nb;
 				System.out.println("le nouveau cout est :"+cout);
-				rechercheEqMoinsCher(base);
+//				rechercheEqMoinsCher(base);
 				
 			}
 		}
