@@ -3,7 +3,6 @@ package comparateur;
 import java.util.Comparator;
 
 import baseEntreprise.Base;
-import baseEntreprise.Entreprise;
 
 public class Trier implements Comparator<Base>{
 
