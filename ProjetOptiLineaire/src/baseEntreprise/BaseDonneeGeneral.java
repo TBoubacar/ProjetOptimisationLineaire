@@ -7,25 +7,30 @@ import java.util.ListIterator;
 
 import comparateur.TriParEntreprise;
 import comparateur.Trier;
+import utils.Observable;
+import utils.Observer;
 
-public class BaseDonneeGeneral implements Comparator<Base> {
+public class BaseDonneeGeneral implements Comparator<Base>, Observable {
 	private ArrayList<Base> listeBasePertinent;
 	private ArrayList<Base> listeBase;
+	private ArrayList<Observer> observers;
 	private static BaseDonneeGeneral instance;
 	private static TriParEntreprise triEntr;
 	private static Trier trier;
 	
-	private BaseDonneeGeneral() {
+	private BaseDonneeGeneral(Observer observer) {
 		// TODO Auto-generated constructor stub
+		this.observers = new ArrayList<Observer>();
+		this.addObserver(observer);
 		this.listeBase = new ArrayList<Base>();
 		this.listeBasePertinent = new ArrayList<Base>();
 		BaseDonneeGeneral.triEntr = new TriParEntreprise();
 		BaseDonneeGeneral.trier = new Trier();
 	}
 	
-	public static BaseDonneeGeneral createBaseDonneeGeneral() {
+	public static BaseDonneeGeneral createBaseDonneeGeneral(Observer observer) {
 		if (instance == null) {
-			instance = new BaseDonneeGeneral();
+			instance = new BaseDonneeGeneral(observer);
 		}
 		return instance;
 	}
@@ -60,9 +65,11 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 	public int optimiserRecherche(ListeEntreprise entreprises,ArrayList<Base>liste) {
 		int cout=0;
 		String msg = "";
+		String msg1 = "";
 		for(Base b : liste) {
 			int cpt=0;
 			msg += "\t[Base n°" + b.getIdBase() + ", ayant pour cout : " + b.getCout() + " euros ";
+			msg1 += "[Base n°" + b.getIdBase() + ", ayant pour cout : " + b.getCout() + " euros ";
 			ListIterator<Entreprise>entreprisesIterator=entreprises.getListeEntreprises().listIterator();
 			while(entreprisesIterator.hasNext()) {
 				Entreprise entr = entreprisesIterator.next();
@@ -72,11 +79,14 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 				}
 			}
 			msg += "contient " + cpt + " entreprise(s)]\n";
+			msg1 += "contient " + cpt + " entreprise(s)]";
 			if(cpt>0) {
 				cout+=b.getCout();
 			}
+			notifyObserver(msg1);
 			System.out.println(msg);
 			msg = "";
+			msg1 = "";
 		}
 		return cout;
 	}
@@ -93,7 +103,10 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 					break;
 				}
 			}
-			System.out.println("Entreprise [" + entreprise.getNom() + "] a pour base le moins couteux : [Base n°" + entreprise.getIdBaseMin() + ", cout : " + entreprise.getCoutMin() + "]\n");
+			String msg = "Entreprise [" + entreprise.getNom() + "] a pour base le moins couteux : [Base n°" + entreprise.getIdBaseMin() + ", cout : " + entreprise.getCoutMin() + "]\n";
+			String msg1 = "Entreprise [" + entreprise.getNom() + "] a pour base le moins couteux : [Base n°" + entreprise.getIdBaseMin() + ", cout : " + entreprise.getCoutMin() + "]";
+			notifyObserver(msg1);
+			System.out.println(msg);
 		}
 		return entreprises;
 	}
@@ -102,17 +115,22 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 		// TODO Auto-generated method stub
 		double cout = 0;
 		String msg = "";
+		String msg1 = "";
 		ArrayList<Integer> basePayer = new ArrayList<Integer>();
-		System.out.println("Nos entreprises ont été retrouvé dans les bases suivants : ");
+		msg = "Nos entreprises ont été retrouvé dans les bases suivants : \n";
+		msg1 = "Nos entreprises ont été retrouvé dans les bases suivants : \n";
+		System.out.println(msg);
 		ListIterator<Entreprise> entreprisesIterator = entreprises.getListeEntreprises().listIterator();
 		while(entreprisesIterator.hasNext()) {
 			Entreprise entreprise = entreprisesIterator.next();
 			if (! basePayer.contains(entreprise.getIdBaseMin())) {
 				cout += entreprise.getCoutMin();
 				msg += "\t[Base n°" + entreprise.getIdBaseMin() + ", ayant pour cout : " + entreprise.getCoutMin() + " euros]\n";
+				msg1 += "[Base n°" + entreprise.getIdBaseMin() + ", ayant pour cout : " + entreprise.getCoutMin() + " euros]";
 				basePayer.add(entreprise.getIdBaseMin());
 			}
 		}
+		notifyObserver(msg1);
 		System.out.println(msg + "\n");
 		return cout;
 	}
@@ -172,4 +190,27 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 		this.listeBasePertinent = listeBasePertinent;
 	}
 
+	public ArrayList<Observer> getObservers() {
+		return observers;
+	}
+
+	public void setObservers(ArrayList<Observer> observers) {
+		this.observers = observers;
+	}
+
+	@Override
+	public void notifyObserver(String msg) {
+		for(Observer o : this.observers)
+			o.update(msg);		
+	}
+
+	@Override
+	public void addObserver(Observer observer) {
+		this.observers.add(observer);
+	}
+
+	@Override
+	public void removeObserver(Observer observer) {
+		this.observers.remove(observer);		
+	}
 }

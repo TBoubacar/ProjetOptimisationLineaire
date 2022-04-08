@@ -4,11 +4,13 @@ import java.util.Scanner;
 
 import algorithmes.BranchAndBound;
 import algorithmes.Glouton;
-public class TestMain {
+import utils.Observer;
+public class TestMain implements Observer {
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		Scanner clavier;
+		TestMain test = new TestMain();
 		String commande = "";
 		String nomFichierBase = "";
 		String nomFichierEntreprise = "";
@@ -45,11 +47,11 @@ public class TestMain {
 				if (! commande.equals("exit")) {
 					System.out.println("\t_________________________Glouton_________________________");
 					@SuppressWarnings("unused")
-					Glouton glouton = new Glouton(nomFichierBase, nomFichierEntreprise);
+					Glouton glouton = new Glouton(nomFichierBase, nomFichierEntreprise, test);
 					
 					System.out.println("\t_________________________Branch and Bound_________________________");
 					@SuppressWarnings("unused")
-					BranchAndBound b = new BranchAndBound(nomFichierBase, nomFichierEntreprise);
+					BranchAndBound b = new BranchAndBound(nomFichierBase, nomFichierEntreprise, test);
 					System.out.println("_________________________END OF TEST_________________________\n"
 									+ "________________________________________________________________\n\n");
 					commande = "exit";
@@ -60,6 +62,12 @@ public class TestMain {
 				e.printStackTrace();
 			}
 		} while (! commande.equals("exit"));
+	}
+
+	@Override
+	public void update(String msg) {
+		// TODO Auto-generated method stub
+		// ON NE FAIT RIEN ICI
 	}
 
 }
