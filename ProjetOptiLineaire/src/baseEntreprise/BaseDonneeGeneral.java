@@ -118,6 +118,7 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 			for(Base b : listeBasePertinent) {
 				if(b.chercheEntreprise(entreprise) && entreprise.getCoutMin() > b.getCout()) {
 					entreprise.changeInfoBaseMoinsGouteux(b.getIdBase(), b.getCout());
+					break;
 				}
 			}
 			System.out.println("Entreprise [" + entreprise.getNom() + "] a pour base le moins couteux : [Base n°" + entreprise.getIdBaseMin() + ", cout : " + entreprise.getCoutMin() + "]\n");
@@ -158,9 +159,7 @@ public class BaseDonneeGeneral implements Comparator<Base> {
 				listeBasePertinent.add(b);
 			}
 			
-		}
-		trierParCout(listeBasePertinent);
-		
+		}		
 	}
 	
 	public void afficheEntr(ArrayList<Entreprise>stock) {

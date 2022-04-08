@@ -42,8 +42,12 @@ public class BranchAndBound {
 			baseDonneeGeneral.addBase(b);
 		}
 		baseDonneeGeneral.optimiserRechercheApproffondies(listeEntreprise);	// On determine l'ensemble des bases avec leur liste d'entreprise
+		double moyenne = 0;
+		double coutApproximatif = 0;
 		for (Base b : baseDonneeGeneral.getListeBasePertinent()) {
-			b.setQualitePrix(b.getCout()/b.getEntreprisesTrouves().size());
+			moyenne = b.getCout()/b.getEntreprisesTrouves().size();
+			coutApproximatif = moyenne - (b.getCout()/moyenne);
+			b.setQualitePrix(coutApproximatif - b.getEntreprisesTrouves().size());
 		}
 		baseDonneeGeneral.trierParQualitePrix(baseDonneeGeneral.getListeBasePertinent());
 		baseDonneeGeneral.findTheBestSolutionOfRechercheBase(listeEntreprise);
